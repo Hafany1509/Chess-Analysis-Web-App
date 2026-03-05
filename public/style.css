@@ -1,0 +1,117 @@
+/* public/style.css */
+
+/* 1. Cấu hình chung cho toàn bộ trang */
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background: #121212; /* Màu tối chuyên nghiệp */
+    color: white; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 { margin-bottom: 5px; }
+p { margin-top: 0; color: #bbb; }
+
+/* 2. Bố cục chính dàn hàng ngang (Flexbox) */
+.main-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* 3. Thanh đánh giá lực lượng (Evaluation Bar) bên trái */
+.eval-bar-container {
+    width: 20px;
+    height: 400px; /* Khớp với chiều cao bàn cờ */
+    background-color: #403d39; 
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.eval-bar {
+    width: 100%;
+    height: 50%; /* Trạng thái cân bằng ban đầu */
+    background-color: #ffffff; 
+    position: absolute;
+    bottom: 0;
+    transition: height 0.5s ease-out;
+}
+
+/* 4. Bàn cờ ở giữa - Cố định kích thước để tránh lỗi hiển thị */
+#myBoard {
+    width: 400px !important;
+    height: 400px !important;
+    background-color: #dee3e6; 
+    box-shadow: 0 5px 25px rgba(0,0,0,0.6);
+}
+
+/* Ép màu sắc cho các ô cờ để tránh lỗi "đen xì" khi ảnh chưa tải kịp */
+.white-1e1d7 { background-color: #f0d9b5 !important; }
+.black-3c85d { background-color: #b58863 !important; }
+
+/* 5. Quan trọng: Sửa lỗi quân cờ bị vỡ hình hoặc quá to khi kéo thả */
+#myBoard *, #myBoard *:before, #myBoard *:after { 
+    box-sizing: content-box; 
+}
+
+img.piece-417db, img[data-piece], .dragging-7634d {
+    width: 50px !important; /* Kích thước chuẩn = 400px / 8 ô */
+    height: 50px !important;
+    z-index: 100;
+}
+
+/* 6. Bảng điều khiển bên phải (Side Panel) */
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 220px;
+}
+
+.info-box, .history-box {
+    background: #262626;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.status-item { 
+    margin-bottom: 8px; 
+    font-size: 0.9em; 
+}
+
+.status-val { 
+    color: #f1c40f; 
+    font-weight: bold; 
+}
+
+/* 7. Khu vực hiển thị lịch sử nước đi */
+.history-box {
+    height: 295px; /* Chiều cao còn lại để tổng cột phải bằng 400px */
+    display: flex;
+    flex-direction: column;
+}
+
+#history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    font-size: 0.85em;
+    color: #bdc3c7;
+    line-height: 1.6;
+}
+
+/* Tùy chỉnh thanh cuộn cho lịch sử nước đi */
+#history-list::-webkit-scrollbar { 
+    width: 5px; 
+}
+#history-list::-webkit-scrollbar-thumb { 
+    background: #444; 
+    border-radius: 10px; 
+}
