@@ -1,167 +1,184 @@
-/* public/style.css */
-
-/* 1. Cấu hình Background nghệ thuật cho toàn bộ trang */
-body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    color: white; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center;
+/* --- Giao diện tổng thể --- */
+body {
+    background-color: #262421; /* Tối hơn một chút để nổi bật bàn cờ */
+    color: #bababa;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
     margin: 0;
-    padding: 20px;
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Lớp nền hình ảnh (Phải dùng fixed để không bị giật khi cuộn) */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Hải hãy thay link ảnh này bằng ảnh cờ vua nghệ thuật bạn thích */
-    background-image: url('https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=2000');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* Hiệu ứng làm mờ (Blur) để không gây rối mắt */
-    filter: blur(8px); 
-    transform: scale(1.1); /* Tránh viền trắng khi blur */
-    z-index: -2;
+.minimal-header {
+    text-align: center;
+    padding: 15px;
 }
 
-/* Lớp phủ tối (Overlay) để nổi bật text */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.75); /* Độ tối 75% */
-    z-index: -1;
-}
+.minimal-header h2 { margin: 0; font-size: 22px; color: #fff; }
+.minimal-header p { margin: 5px 0 0; font-size: 13px; color: #81b64c; opacity: 0.8; }
 
-h2 { margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-p { margin-top: 0; color: #ccc; }
-
-/* 2. Bố cục chính dàn hàng ngang (Flexbox) */
+/* --- Bố cục chính --- */
 .main-layout {
     display: flex;
-    justify-content: center;
+    gap: 25px;
+    padding: 10px;
     align-items: flex-start;
-    gap: 15px;
-    margin-top: 20px;
 }
 
-/* 3. Thanh đánh giá lực lượng (Evaluation Bar) bên trái */
+#myBoard {
+    width: 520px;
+    border: 2px solid #403d39;
+    border-radius: 3px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+
+/* --- Thanh đánh giá (Eval Bar) --- */
 .eval-bar-container {
-    width: 25px; /* Tăng nhẹ để chứa số rõ hơn */
-    height: 400px;
-    background-color: #1a1a1a; /* Phần màu đen (Đen ưu) */
-    border-radius: 4px;
+    width: 24px;
+    height: 520px;
+    background-color: #403d39;
     position: relative;
+    border-radius: 3px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
-    border: 1px solid #333;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .eval-bar {
     width: 100%;
-    background-color: #ffffff; /* Phần màu trắng (Trắng ưu) */
-    position: absolute;
-    bottom: 0;
-    transition: height 0.5s ease-out;
+    background-color: #fff;
+    transition: height 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Điểm số hiển thị động trên thanh lực */
 #eval-score-v2 {
     position: absolute;
     width: 100%;
     text-align: center;
-    font-size: 11px;
     font-weight: bold;
-    z-index: 5;
-    transition: all 0.3s ease;
+    font-size: 11px;
+    z-index: 10;
+    padding: 5px 0;
 }
 
-/* 4. Bàn cờ ở giữa - Cố định kích thước */
-#myBoard {
-    width: 400px !important;
-    height: 400px !important;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.8);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-/* Ép màu sắc cho các ô cờ chuẩn */
-.white-1e1d7 { background-color: #f0d9b5 !important; }
-.black-3c85d { background-color: #b58863 !important; }
-
-/* 5. Fix lỗi quân cờ vỡ hình */
-#myBoard *, #myBoard *:before, #myBoard *:after { 
-    box-sizing: content-box; 
-}
-
-img.piece-417db, img[data-piece], .dragging-7634d {
-    width: 50px !important; 
-    height: 50px !important;
-    z-index: 100;
-}
-
-/* 6. Bảng điều khiển bên phải (Side Panel) */
+/* --- Bảng điều khiển bên phải --- */
 .side-panel {
+    width: 320px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 240px;
+    gap: 15px;
 }
 
-.info-box, .history-box {
-    background: rgba(38, 38, 38, 0.85); /* Nền trong suốt nhẹ */
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    backdrop-filter: blur(5px); /* Hiệu ứng kính mờ cho bảng tin */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+.player-card {
+    background: #312e2b;
+    padding: 12px;
+    border-radius: 4px;
+    border-left: 4px solid #81b64c;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.status-item { 
-    margin-bottom: 8px; 
-    font-size: 0.9em; 
-}
-
-.status-val { 
-    color: #f1c40f; 
-    font-weight: bold; 
-}
-
-/* 7. Khu vực hiển thị lịch sử nước đi */
-.history-box {
-    height: 295px;
+.player-line {
     display: flex;
-    flex-direction: column;
-}
-
-.history-box strong {
-    border-bottom: 1px solid #555;
-    padding-bottom: 8px;
-    margin-bottom: 10px;
-    display: block;
-}
-
-#history-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    font-size: 0.85em;
-    color: #ddd;
+    justify-content: space-between;
+    font-size: 14px;
     line-height: 1.6;
 }
 
-/* Tùy chỉnh thanh cuộn */
-#history-list::-webkit-scrollbar { width: 6px; }
-#history-list::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
-#history-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+.action-box textarea {
+    width: 100%;
+    height: 70px;
+    background: #1e1e1e;
+    color: #81b64c;
+    border: 1px solid #3b3835;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 12px;
+    resize: none;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.btn-group {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.btn-primary { background: #81b64c; color: #fff; flex: 2; padding: 12px; }
+.btn-primary:hover { background: #95bb4a; transform: translateY(-1px); }
+.btn-secondary { background: #3b3835; color: #bababa; flex: 1; }
+.btn-secondary:hover { background: #454341; color: #fff; }
+
+/* --- Lịch sử nước đi (Move Grid) --- */
+.history-container {
+    background: #262421;
+    border-radius: 4px;
+    border: 1px solid #3b3835;
+    overflow: hidden;
+}
+
+.live-eval {
+    padding: 8px;
+    background: #312e2b;
+    font-size: 12px;
+    text-align: center;
+    border-bottom: 1px solid #3b3835;
+}
+
+.move-grid {
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.move-num {
+    background: #2a2825;
+    color: #636261;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 11px;
+}
+
+.move-cell {
+    padding: 8px 15px;
+    cursor: pointer;
+    color: #bababa;
+    border-bottom: 1px solid #2a2825;
+}
+
+.move-cell:hover { background: #32302d; }
+
+.move-active {
+    background: #363431 !important;
+    color: #fff !important;
+    /* Đổi vạch kẻ sang màu xanh tương ứng */
+    border-left: 3px solid #9bc700; 
+    font-weight: bold;
+}
+
+/* --- HIGHLIGHT NƯỚC ĐI (Màu xanh dịu nhẹ, chuyên nghiệp) --- */
+.highlight-move {
+    /* Màu xanh lá nhạt với độ trong suốt thấp (25%) */
+    background-color: rgba(223, 239, 163, 0.4) !important; 
+    /* Viền mờ bên trong để tạo chiều sâu cho ô cờ */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+/* Đảm bảo quân cờ luôn rõ nét trên nền xanh */
+.square-55d63 img {
+    position: relative;
+    z-index: 5;
+    /* Hiệu ứng đổ bóng nhẹ cho quân cờ để tách biệt với nền highlight */
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+}
