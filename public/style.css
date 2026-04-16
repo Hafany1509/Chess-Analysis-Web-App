@@ -1,184 +1,121 @@
-/* --- Giao diện tổng thể --- */
 body {
-    background-color: #262421; /* Tối hơn một chút để nổi bật bàn cờ */
+    background-color: #161512;
     color: #bababa;
-    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
-
 .minimal-header {
     text-align: center;
-    padding: 15px;
+    padding: 10px;
+    background: #262421;
+    border-bottom: 1px solid #3b3835;
 }
-
-.minimal-header h2 { margin: 0; font-size: 22px; color: #fff; }
-.minimal-header p { margin: 5px 0 0; font-size: 13px; color: #81b64c; opacity: 0.8; }
-
-/* --- Bố cục chính --- */
 .main-layout {
     display: flex;
-    gap: 25px;
-    padding: 10px;
+    justify-content: center;
     align-items: flex-start;
+    gap: 30px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
-
-#myBoard {
-    width: 520px;
-    border: 2px solid #403d39;
-    border-radius: 3px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* --- Thanh đánh giá (Eval Bar) --- */
 .eval-bar-container {
-    width: 24px;
-    height: 520px;
-    background-color: #403d39;
+    width: 40px;
+    height: 450px;
+    background: #403d39;
     position: relative;
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
-
 .eval-bar {
     width: 100%;
-    background-color: #fff;
-    transition: height 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    background: white;
+    height: 50%;
+    transition: height 0.5s ease;
 }
-
 #eval-score-v2 {
-    position: absolute;
-    width: 100%;
-    text-align: center;
+    z-index: 5;
     font-weight: bold;
-    font-size: 11px;
-    z-index: 10;
-    padding: 5px 0;
+    color: #161512;
+    font-size: 12px;
+    padding-top: 5px;
 }
-
-/* --- Bảng điều khiển bên phải --- */
+.board-wrapper {
+    position: relative;
+    width: 450px;
+    height: 450px;
+    flex-shrink: 0;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+#myBoard { width: 100%; }
+#primary_canvas, #drawing_canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
 .side-panel {
-    width: 320px;
+    width: 360px;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
-
 .player-card {
-    background: #312e2b;
+    background: #262421;
     padding: 12px;
     border-radius: 4px;
-    border-left: 4px solid #81b64c;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 1px solid #3b3835;
 }
-
-.player-line {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
 .action-box textarea {
     width: 100%;
-    height: 70px;
+    height: 80px;
     background: #1e1e1e;
-    color: #81b64c;
+    color: #ddd;
     border: 1px solid #3b3835;
-    border-radius: 4px;
     padding: 10px;
-    font-size: 12px;
-    resize: none;
     box-sizing: border-box;
-    outline: none;
+    resize: none;
+    border-radius: 4px;
 }
-
 .btn-group {
     display: flex;
-    gap: 6px;
+    gap: 10px;
     margin-top: 10px;
 }
-
-button {
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 700;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    font-size: 12px;
-}
-
-.btn-primary { background: #81b64c; color: #fff; flex: 2; padding: 12px; }
-.btn-primary:hover { background: #95bb4a; transform: translateY(-1px); }
-.btn-secondary { background: #3b3835; color: #bababa; flex: 1; }
-.btn-secondary:hover { background: #454341; color: #fff; }
-
-/* --- Lịch sử nước đi (Move Grid) --- */
+.btn-primary { background: #81b64c; color: white; flex: 2; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+.btn-secondary { background: #3b3835; color: #bababa; flex: 1; border: none; cursor: pointer; border-radius: 4px; padding: 10px; }
 .history-container {
     background: #262421;
+    height: 200px;
     border-radius: 4px;
     border: 1px solid #3b3835;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
-
-.live-eval {
-    padding: 8px;
-    background: #312e2b;
-    font-size: 12px;
-    text-align: center;
-    border-bottom: 1px solid #3b3835;
-}
-
+.live-eval { padding: 8px; font-size: 13px; border-bottom: 1px solid #3b3835; text-align: center; }
 .move-grid {
     display: grid;
     grid-template-columns: 40px 1fr 1fr;
-    max-height: 240px;
     overflow-y: auto;
+    font-size: 14px;
 }
-
-.move-num {
-    background: #2a2825;
-    color: #636261;
-    text-align: center;
-    padding: 8px 0;
-    font-size: 11px;
-}
-
-.move-cell {
-    padding: 8px 15px;
-    cursor: pointer;
-    color: #bababa;
-    border-bottom: 1px solid #2a2825;
-}
-
-.move-cell:hover { background: #32302d; }
-
-.move-active {
-    background: #363431 !important;
-    color: #fff !important;
-    /* Đổi vạch kẻ sang màu xanh tương ứng */
-    border-left: 3px solid #9bc700; 
+.move-num { background: #312e2b; padding: 5px; text-align: center; color: #757575; }
+.move-cell { padding: 5px 10px; cursor: pointer; }
+.move-cell:hover { background: #3b3835; }
+.move-active { background: #4d4a46 !important; color: #fff; }
+.delete-btn {
+    position: absolute;
+    right: 10px;
+    color: #ff4444;
     font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
 }
-
-/* --- HIGHLIGHT NƯỚC ĐI (Màu xanh dịu nhẹ, chuyên nghiệp) --- */
-.highlight-move {
-    /* Màu xanh lá nhạt với độ trong suốt thấp (25%) */
-    background-color: rgba(223, 239, 163, 0.4) !important; 
-    /* Viền mờ bên trong để tạo chiều sâu cho ô cờ */
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-}
-
-/* Đảm bảo quân cờ luôn rõ nét trên nền xanh */
-.square-55d63 img {
-    position: relative;
-    z-index: 5;
-    /* Hiệu ứng đổ bóng nhẹ cho quân cờ để tách biệt với nền highlight */
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
-}
+.delete-btn:hover { background: #ff4444; color: #fff; border-radius: 2px; }
