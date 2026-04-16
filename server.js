@@ -1,48 +1,61 @@
 const express = require('express');
-const path = require('path');
-const mysql = require('mysql2'); // Di chuyển lên đầu cho gọn
+const mysql = require('mysql2');
+const bodyParser = require('body-parser');
 const app = express();
-const PORT = 3000;
 
-// QUAN TRỌNG: Dòng này giúp Server đọc được dữ liệu JSON gửi từ fetch()
-app.use(express.json()); 
+app.use(bodyParser.json());
+app.use(express.static('public'));
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Kết nối MySQL
-const connection = mysql.createConnection({
+const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root', 
+    user: 'root',
     password: '123456', 
-    database: 'chess_analysis'
+    database: 'chess_db'
 });
 
-connection.connect(err => {
-    if (err) {
-        console.error('Lỗi kết nối MySQL: ' + err.stack);
-        return;
-    }
-    console.log('Đã kết nối thành công database: chess_analysis');
+db.connect(err => {
+    if (err) throw err;
+    console.log("Connected to MySQL Database");
 });
 
-// THIẾU ĐOẠN NÀY: API nhận dữ liệu lưu ván cờ
-app.post('/api/save-game', (req, res) => {
-    const { player_name, pgn_data } = req.body;
-    const sql = 'INSERT INTO games (player_name, pgn_data) VALUES (?, ?)';
-    
-    connection.query(sql, [player_name, pgn_data], (err, result) => {
-        if (err) {
-            console.error("Lỗi MySQL:", err);
-            return res.status(500).json({ error: "Không thể lưu vào Database" });
-        }
-        res.json({ message: "Đã lưu ván cờ thành công!", id: result.insertId });
+app.post('/api/register', (req, res) => {
+    const { username, password } = req.body;
+    db.query('INSERT INTO users (username, password, role) VALUES (?, ?, "user")', [username, password], (err, result) => {
+        if (err) return res.status(500).json({ error: "Tài khoản đã tồn tại hoặc lỗi CSDL" });
+        res.json({ success: true });
     });
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, results) => {
+        if (err || results.length === 0) return res.status(401).json({ error: "Sai tài khoản hoặc mật khẩu" });
+        res.json({ success: true, user: { id: results[0].id, username: results[0].username, role: results[0].role } });
+    });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server đang chay tai: http://localhost:${PORT}`);
+app.post('/api/save-game', (req, res) => {
+    const { player_name, pgn_data, user_id } = req.body;
+    db.query('INSERT INTO games (player_name, pgn_data, user_id) VALUES (?, ?, ?)', [player_name, pgn_data, user_id], (err) => {
+        if (err) return res.status(500).json({ error: "Lỗi lưu ván đấu" });
+        res.json({ success: true });
+    });
+});
+
+app.get('/api/my-games/:userId', (req, res) => {
+    db.query('SELECT * FROM games WHERE user_id = ? ORDER BY created_at DESC', [req.params.userId], (err, results) => {
+        if (err) return res.status(500).json({ error: "Lỗi tải dữ liệu" });
+        res.json(results);
+    });
+});
+
+app.delete('/api/delete-game/:id', (req, res) => {
+    db.query('DELETE FROM games WHERE id = ?', [req.params.id], (err) => {
+        if (err) return res.status(500).json({ success: false });
+        res.json({ success: true });
+    });
+});
+
+app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
 });
