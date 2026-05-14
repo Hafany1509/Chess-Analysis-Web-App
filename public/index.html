@@ -3,75 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Analysis - Lê Huy Hải</title>
+    <title>Chess Analysis — Lê Huy Hải</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-      
-    <header class="minimal-header">
-        <h2>Chess Analysis System</h2>
-        <p>B23DCCN272 - Lê Huy Hải</p>
+
+    <!-- ── Header ────────────────────────────────────────── -->
+    <header class="site-header">
+        <div class="site-logo">
+            <div class="logo-dot"></div>
+            <h1>Chess Analysis</h1>
+            <span class="site-byline">B23DCCN272 · Lê Huy Hải</span>
+        </div>
+
+        <div id="userSection">
+            <button id="openLoginBtn">Đăng nhập</button>
+            <span id="userInfo">
+                <span id="displayUser"></span>
+                <a href="#" id="logoutBtn">Đăng xuất</a>
+            </span>
+        </div>
     </header>
 
-    <div id="userSection" style="position: absolute; top: 15px; right: 20px; z-index: 100;">
-        <button id="openLoginBtn" style="padding: 8px 16px; background: #454341; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Đăng nhập</button>
-        <span id="userInfo" style="display: none; color: #81b64c; font-weight: bold; background: #262421; padding: 8px 15px; border-radius: 4px; border: 1px solid #3b3835;">
-            Xin Chào, <span id="displayUser"></span> | 
-            <a href="#" id="logoutBtn" style="color: #ff4444; text-decoration: none; font-size: 12px; margin-left: 5px;">Đăng xuất</a>
-        </span>
-    </div>
-
+    <!-- ── Main ──────────────────────────────────────────── -->
     <div class="main-layout">
-        <div class="eval-bar-container">
-            <div id="eval-score-v2">0.0</div>
-            <div id="eval-bar" class="eval-bar"></div>
+
+        <!-- Eval bar + Board gộp chung -->
+        <div class="board-group">
+            <div class="eval-bar-container">
+                <div id="eval-score-v2">0.0</div>
+                <div id="eval-bar" class="eval-bar"></div>
+            </div>
+            <div class="board-wrapper">
+                <div id="myBoard"></div>
+                <canvas id="primary_canvas" width="450" height="450"></canvas>
+                <canvas id="drawing_canvas" width="450" height="450"></canvas>
+            </div>
         </div>
 
-        <div class="board-wrapper">
-            <div id="myBoard"></div>
-            <canvas id="primary_canvas" width="450" height="450"></canvas>
-            <canvas id="drawing_canvas" width="450" height="450"></canvas>
-        </div>
-
+        <!-- Side panel -->
         <div class="side-panel">
+
+            <!-- Players -->
             <div class="player-card">
-                <div>⚪ <b id="white-name">White</b></div>
-                <div style="margin-top: 5px;">⚫ <b id="black-name">Black</b></div>
+                <div class="player-row">
+                    <div class="player-dot black"></div>
+                    <span class="player-name" id="black-name">Black</span>
+                    <span class="player-acc"    id="black-acc"></span>
+                    <span class="player-result" id="black-result"></span>
+                </div>
+                <div class="player-divider"></div>
+                <div class="player-row">
+                    <div class="player-dot white"></div>
+                    <span class="player-name" id="white-name">White</span>
+                    <span class="player-acc"    id="white-acc"></span>
+                    <span class="player-result" id="white-result"></span>
+                </div>
             </div>
 
+            <!-- Controls -->
             <div class="action-box">
                 <textarea id="pgnInput" placeholder="Dán mã PGN tại đây..."></textarea>
                 <div class="btn-group">
                     <button id="importPgnBtn" class="btn-primary">PHÂN TÍCH PGN</button>
                     <button id="toggleEngineBtn" class="btn-secondary">ENGINE: OFF</button>
                 </div>
-                <button id="flipBoardBtn" class="btn-secondary" style="width: 100%; margin-top: 10px;">XOAY BÀN CỜ</button>
+                <div class="btn-group">
+                    <button id="flipBoardBtn" class="btn-secondary" style="flex:1;">↕ XOAY BÀN</button>
+                    <button id="newGameBtn"   class="btn-new"       style="flex:1;">↺ VÁN MỚI</button>
+                </div>
+                <button id="analyzeBtn">⬡ PHÂN TÍCH BLUNDER</button>
+                <div id="save-status"></div>
             </div>
 
+            <!-- Move history -->
             <div class="history-container">
-                <div id="eval-text" class="live-eval">Đánh giá Engine: 0.0</div>
+                <div id="eval-text" class="live-eval">Engine · 0.0</div>
                 <div id="history-list" class="move-grid"></div>
             </div>
 
-            <div class="my-games-container" style="background: #262421; border-radius: 4px; border: 1px solid #3b3835; overflow: hidden;">
-                <div style="padding: 8px; background: #312e2b; font-size: 12px; font-weight: bold; color: #81b64c; border-bottom: 1px solid #3b3835;">
-                    VÁN ĐẤU CỦA TÔI
-                </div>
-                <div id="my-games-list" style="max-height: 150px; overflow-y: auto;">
-                    <p style="padding: 10px; color: #757575; text-align: center; font-size: 12px;">Đăng nhập để xem ván đấu.</p>
+            <!-- My games -->
+            <div class="my-games-box">
+                <div class="my-games-header">Ván đấu của tôi</div>
+                <div id="my-games-list">
+                    <p style="padding:12px 14px; color:var(--text-muted); font-size:12px;">Đăng nhập để xem ván đấu.</p>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <div id="authModal" class="modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);">
-        <div style="background: #262421; margin: 10% auto; padding: 25px; border: 1px solid #81b64c; width: 300px; border-radius: 8px; color: white;">
-            <h3 id="authTitle" style="text-align: center;">Đăng Nhập</h3>
-            <input type="text" id="username" placeholder="Tên tài khoản" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1917; border: 1px solid #444; color: white; box-sizing: border-box;">
-            <input type="password" id="password" placeholder="Mật khẩu" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1917; border: 1px solid #444; color: white; box-sizing: border-box;">
-            <button id="authBtn" style="width: 100%; padding: 10px; background: #81b64c; border: none; color: white; font-weight: bold; cursor: pointer; border-radius: 4px;">XÁC NHẬN</button>
-            <p style="text-align: center; font-size: 12px; margin-top: 15px;"><a href="#" id="toggleAuth" style="color: #aaa; text-decoration: none;">Chưa có tài khoản? Đăng ký ngay</a></p>
+    <!-- ── Auth Modal ─────────────────────────────────────── -->
+    <div id="authModal">
+        <div class="modal-box">
+            <div class="modal-title" id="authTitle">Đăng nhập</div>
+            <input type="text"     id="username" class="modal-input" placeholder="Tên tài khoản" autocomplete="username">
+            <input type="password" id="password" class="modal-input" placeholder="Mật khẩu" autocomplete="current-password">
+            <div id="rememberRow" class="modal-remember">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Nhớ tài khoản</label>
+            </div>
+            <button id="authBtn" class="modal-btn">XÁC NHẬN</button>
+            <div class="modal-toggle">
+                <a href="#" id="toggleAuth">Chưa có tài khoản? Đăng ký ngay</a>
+            </div>
         </div>
     </div>
 
@@ -79,6 +118,8 @@
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="chessboard-arrows.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script src="analyzer.js"></script>
 </body>
 </html>
